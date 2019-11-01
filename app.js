@@ -2,13 +2,28 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
 
 const app = express();
 
-const events = [];
+const Event = require('./models/event');
+
+//variables globales
 
 //Middleware
 app.use(bodyParser.json());
+
+//Configuración de la Base de Datos
+const db = require('./config/keys').MongoURI;
+
+//Conectar a Mongo db
+mongoose
+	.connect(db, {
+		useUnifiedTopology : true,
+		useNewUrlParser    : true
+	})
+	.then(() => console.log('MongoDB Conectada... xD'))
+	.catch((err) => console.log(err));
 
 //Routes
 app.use(
@@ -17,14 +32,14 @@ app.use(
 		schema    : buildSchema(`
             type Event {
                 _id: ID!
-                tittle: String!
+                title: String!
                 description: String!
                 price: Float!
                 date: String!
             }
 
             input EventInput {
-                tittle: String!
+                title: String!
                 description: String!
                 price: Float!
                 date: String!                
@@ -44,18 +59,35 @@ app.use(
         `),
 		rootValue : {
 			events      : () => {
-				return events;
+				return Event.find()
+					.then((events) => {
+						return events.map((event) => {
+							return { ...event._doc };
+						});
+					})
+					.catch((err) => {
+						throw err;
+					});
 			},
 			createEvent : (args) => {
-				const { tittle, description, price, date } = args.eventInput;
-				const event = {
-					_id         : Math.random().toString(),
-					tittle,
+				const { title, description, price, date } = args.eventInput;
+
+				const event = new Event({
+					title,
 					description,
 					price       : +price,
-					date        : new Date().toISOString()
-				};
-				events.push(event);
+					date        : new Date(date)
+				});
+				return event
+					.save()
+					.then((result) => {
+						console.log(result);
+						return { ...result._doc };
+					})
+					.catch((err) => {
+						console.log(err);
+						throw err;
+					});
 				return event;
 			}
 		},
