@@ -1,0 +1,8 @@
+{
+    "env": {
+        "MONGO_USER": "tenhitokiri",
+        "MONGO_PASSWORD": "En1el2es1",
+        "MONGO_DB": "events",
+        "PORT": 3500
+    }
+}

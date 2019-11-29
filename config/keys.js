@@ -1,3 +1,3 @@
 module.exports = {
-	MongoURI : `mongodb+srv://tenhitokiri:En1el2es1@cluster0-zfj4f.mongodb.net/events?retryWrites=true&w=majority`
+	MongoURI: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-zfj4f.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
 };
