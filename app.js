@@ -10,7 +10,7 @@ const graphiqlResolver = require('./graphql/resolvers/index');
 //variables globales
 const port = process.env.PORT || 3500;
 
-//seguir en  video 7 00:14:20
+//seguir en  video 10 revisar codigo
 
 //Middleware
 app.use(bodyParser.json());
